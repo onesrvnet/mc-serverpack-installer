@@ -810,8 +810,8 @@ if mode == "pterodactyl":
                     print("Forge version is:", forge_ver)
 
                     link_from = join(
-                        "mnt","server", "libraries", "net", "minecraftforge", "forge", forge_ver, "unix_args.txt")
-                    link_to = join("mnt","server", "unix_args.txt")
+                        "/mnt","server", "libraries", "net", "minecraftforge", "forge", forge_ver, "unix_args.txt")
+                    link_to = join("/mnt","server", "unix_args.txt")
 
                     #print(f"Creating symbolic link for unix_args.txt to root folder from {link_from} to {link_to}")
 
