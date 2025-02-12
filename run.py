@@ -490,9 +490,10 @@ else:
                 os.remove(sever_jar_path)
 
         # If there is no forge, fabric or serverstarter installer, but a manifest.json file. Download the mods manually using a separate script.
-        # TODO: REWORK THIS TO USE OUR CF-API WRAPPER TO DOWNLOAD MDOS
+        # DONE: REWORK THIS TO USE OUR CF-API WRAPPER TO DOWNLOAD MDOS
         manifest_installer = False
-        if not forge_installer and not serverstarter_installer and not mods_csv_installer:
+        mods_existing = any(file.endswith(".jar") for file in os.listdir(f"{this_dir}/{folder_name}/mods"))
+        if not mods_existing and not forge_installer and not serverstarter_installer and not mods_csv_installer:
             for name in glob.glob(this_dir + "/" + folder_name + "/" + "manifest.json"):
                 if name:
                     manifest_installer = True
