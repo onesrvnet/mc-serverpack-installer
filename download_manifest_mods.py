@@ -25,11 +25,9 @@ def download_manifest_mods(path,apiKey):
                 try:
                     print(f"https://api.hypesrv.net/v2/modpack/fileUrl/{mod_id}/{file_id}")
                     headers = {"Authorization": "Bearer "+apiKey}
-                    print(headers)
-                    response_body = requests.get(f"https://api.hypesrv.net/v2/modpack/fileUrl/{mod_id}/{file_id}", timeout=60, headers=headers).json()
-                    print(response_body)
-                    response = response_body["data"]
-                    mname = response["name"]
+                    response = requests.get(f"https://api.hypesrv.net/v2/modpack/fileUrl/{mod_id}/{file_id}", timeout=60, headers=headers).json()["data"]
+                    print(response)
+                    mname = response["displayName"]
                     print(f"Downloading {mname} ...")
                     download(response["download_url"])
                 except:
