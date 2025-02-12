@@ -793,25 +793,25 @@ if mode == "pterodactyl":
     delete_directory(join(this_dir, folder_name))
 
     # Done in egg install script instead.
-
+    os.system(f"rsync -a {this_dir}/modpack_folder/ /mnt/server/")
     # Forge 1.17+ section with new startup mechanism for ptero (symlink after moving files)
     new_forge_ver = False
-    for user_jvm_args in glob.glob(glob.escape(this_dir + "/modpack_folder/" ) + "user_jvm_args.txt"):
+    for user_jvm_args in glob.glob(glob.escape("/mnt/server/" ) + "user_jvm_args.txt"):
         if user_jvm_args:
             print("Detected user_jvm_args.txt file indicating newer forge version.")
             new_forge_ver = True
             if operating_system == "Linux":
-                for name in glob.glob(glob.escape(this_dir + "/modpack_folder/") + "run.sh"):
+                for name in glob.glob(glob.escape("/mnt/server/") + "run.sh"):
                     if name:
                         os.system(f"chmod +x {name}")
-            for forge_ver_folder in glob.glob(glob.escape(this_dir + "/modpack_folder/" + "libraries" + "/" + "net" + "/" + "minecraftforge" + "/" + "forge" + "/") + "*"):
+            for forge_ver_folder in glob.glob(glob.escape("/mnt/server/" + "libraries" + "/" + "net" + "/" + "minecraftforge" + "/" + "forge" + "/") + "*"):
                 if forge_ver_folder:
                     forge_ver = os.path.basename(forge_ver_folder)
                     print("Forge version is:", forge_ver)
 
                     link_from = join(
-                        this_dir,"modpack_folder", "libraries", "net", "minecraftforge", "forge", forge_ver, "unix_args.txt")
-                    link_to = join(this_dir, "modpack_folder", "unix_args.txt")
+                        "mnt","server", "libraries", "net", "minecraftforge", "forge", forge_ver, "unix_args.txt")
+                    link_to = join("mnt","server", "unix_args.txt")
 
                     #print(f"Creating symbolic link for unix_args.txt to root folder from {link_from} to {link_to}")
 
