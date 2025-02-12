@@ -587,7 +587,7 @@ else:
                                 print(
                                     "Running Forge Installer. This may take a minute or two...")
                                 os.system(
-                                    f'java -jar "{name}" --installServer')
+                                    f'java -jar -Xmx6G "{name}" --installServer')
                                 print("Finished running forge installer")
                                 os.remove(name)
                                 print("Removed forge installer")
