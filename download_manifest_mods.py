@@ -17,9 +17,9 @@ def download_manifest_mods(path,apiKey):
                 file_id = mod['fileID']
             except:
                 print("Error parsing mod download IDs")
-            if mod['required'] == False:
-                print(f"Detected optional server mod {mod_id}. Skipping download.")
-                continue
+            #if mod['required'] == False:
+            #    print(f"Detected optional server mod {mod_id}. Skipping download.")
+            #    continue
             if mod_id and file_id:
                 # Try and get Mod Download file from our CF API
                 try:
