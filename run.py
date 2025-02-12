@@ -816,7 +816,7 @@ if mode == "pterodactyl":
                     #print(f"Creating symbolic link for unix_args.txt to root folder from {link_from} to {link_to}")
 
                     if operating_system == "Linux":
-                        os.system(f"ln -sf {link_from} {link_to}")
+                        os.system(f"cp {link_from} {link_to}")
                         #os.symlink(link_from, link_to)
                     # Requires enabling developer mode in windows 10.
                     elif operating_system == "Windows":
