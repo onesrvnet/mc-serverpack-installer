@@ -8,6 +8,7 @@ from shutil import move, rmtree, copy
 from get_modpack_info import get_server_modpack_url, get_modpack_minecraft_version
 from get_forge_or_fabric_version import get_forge_or_fabric_version_from_manifest
 from download_modrinth_mods import download_modrinth_mods, move_modrinth_overrides, grab_modrinth_serverjars
+from download_manifest_mods import download_manifest_mods
 from download_file import download, download_wget
 from unzip_modpack import unzip
 from serverstarter_func import change_installpath
@@ -485,14 +486,23 @@ else:
                 os.remove(sever_jar_path)
 
         # If there is no forge, fabric or serverstarter installer, but a manifest.json file. Download the mods manually using a separate script.
+        # TODO: REWORK THIS TO USE OUR CF-API WRAPPER TO DOWNLOAD MDOS
         manifest_installer = False
         if not forge_installer and not serverstarter_installer and not mods_csv_installer:
             for name in glob.glob(this_dir + "/" + folder_name + "/" + "manifest.json"):
                 if name:
                     manifest_installer = True
                     print("Running manifest installer...")
-                    os.system(
-                        f'''java -jar "{this_dir}/ModpackDownloader-cli-0.7.2.jar" -manifest "{this_dir}/{folder_name}/manifest.json" -folder "{this_dir}/{folder_name}/mods"''')
+                    mods_folder_exists = os.path.exists(
+                        f"{this_dir}/{folder_name}/mods")
+                    if not mods_folder_exists:
+                        os.mkdir(f"{this_dir}/{folder_name}/mods")
+
+                    os.chdir(f"{this_dir}/{folder_name}/mods")
+                    download_manifest_mods(name)
+                    os.chdir(f"{this_dir}/{folder_name}")
+                    #os.system(
+                    #    f'''java -jar "{this_dir}/ModpackDownloader-cli-0.7.2.jar" -manifest "{this_dir}/{folder_name}/manifest.json" -folder "{this_dir}/{folder_name}/mods"''')
 
         # If there was no included forge/fabric or serverstarter installer, as well as no manifest.json provided in the serverpack, look for existing forge or fabric server jar. If they don't exist, get the manifest file and download the correct forge/fabric version and install it.
         server_jar_found = False
