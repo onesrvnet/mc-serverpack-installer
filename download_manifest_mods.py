@@ -24,7 +24,8 @@ def download_manifest_mods(path):
                 # Try and get Mod Download file from our CF API
                 try:
                     response = requests.get(f"https://api.hypesrv.net/v2/modpack/fileUrl/{mod_id}/{file_id}", timeout=60, headers={"Authorization": "Bearer "+os.environ['HS_MOD_API_KEY']}).json()["data"]
-                    print(f"Downloading {response["name"]} ...")
+                    mname = response["name"]
+                    print(f"Downloading {mname} ...")
                     download(response["download_url"])
                 except:
                     print(f"Error downloading mod {mod_id}.")
