@@ -41,6 +41,9 @@ parser.add_argument("--folder-name", default=False, type=str, action="store")
 # Set working path where modpack should download and install
 parser.add_argument("--working-path", default=False, type=str, action="store")
 
+# Set working path where modpack should download and install
+parser.add_argument("--manifest-api-key", default=False, type=str, action="store")
+
 args = parser.parse_args()
 
 provider = args.provider
@@ -53,6 +56,7 @@ output = args.folder_name
 working_path = args.working_path
 clean_startup_script = args.clean_scripts
 remove_old_files = args.update
+manifest_api_key = args.manifest_api_key
 
 interpreter_path = sys.executable
 if provider == "curse" or provider == "technic" or provider == "ftb" or provider == "modrinth":
@@ -499,7 +503,7 @@ else:
                         os.mkdir(f"{this_dir}/{folder_name}/mods")
 
                     os.chdir(f"{this_dir}/{folder_name}/mods")
-                    download_manifest_mods(name)
+                    download_manifest_mods(name,manifest_api_key)
                     os.chdir(f"{this_dir}/{folder_name}")
                     #os.system(
                     #    f'''java -jar "{this_dir}/ModpackDownloader-cli-0.7.2.jar" -manifest "{this_dir}/{folder_name}/manifest.json" -folder "{this_dir}/{folder_name}/mods"''')

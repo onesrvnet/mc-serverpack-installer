@@ -7,7 +7,7 @@ import requests
 from download_file import download
 
 
-def download_manifest_mods(path):
+def download_manifest_mods(path,apiKey):
     with open(path, encoding="UTF-8") as f:
         data = json.load(f)
         print("Starting download of modpack manifest server mods...")
@@ -23,7 +23,12 @@ def download_manifest_mods(path):
             if mod_id and file_id:
                 # Try and get Mod Download file from our CF API
                 try:
-                    response = requests.get(f"https://api.hypesrv.net/v2/modpack/fileUrl/{mod_id}/{file_id}", timeout=60, headers={"Authorization": "Bearer "+os.environ['HS_MOD_API_KEY']}).json()["data"]
+                    print(f"https://api.hypesrv.net/v2/modpack/fileUrl/{mod_id}/{file_id}")
+                    headers = {"Authorization": "Bearer "+apiKey}
+                    print(headers)
+                    response_body = requests.get(f"https://api.hypesrv.net/v2/modpack/fileUrl/{mod_id}/{file_id}", timeout=60, headers=headers).json()
+                    print(response_body)
+                    response = response_body["data"]
                     mname = response["name"]
                     print(f"Downloading {mname} ...")
                     download(response["download_url"])
