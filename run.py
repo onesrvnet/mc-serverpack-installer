@@ -804,7 +804,7 @@ if mode == "pterodactyl":
                 for name in glob.glob(glob.escape("/mnt/server/") + "run.sh"):
                     if name:
                         os.system(f"chmod +x {name}")
-            for forge_ver_folder in glob.glob(glob.escape("/","mnt","/","server","/" + "libraries" + "/" + "net" + "/" + "minecraftforge" + "/" + "forge" + "/") + "*"):
+            for forge_ver_folder in glob.glob(glob.escape("/"+"mnt"+"/"+"server"+"/" + "libraries" + "/" + "net" + "/" + "minecraftforge" + "/" + "forge" + "/") + "*"):
                 if forge_ver_folder:
                     forge_ver = os.path.basename(forge_ver_folder)
                     print("Forge version is:", forge_ver)
