@@ -29,7 +29,7 @@ def download_manifest_mods(path,apiKey):
                     print(response)
                     mname = response["displayName"]
                     print(f"Downloading {mname} ...")
-                    download(response["download_url"])
+                    download(response["downloadUrl"])
                 except:
                     print(f"Error downloading mod {mod_id}.")
 
