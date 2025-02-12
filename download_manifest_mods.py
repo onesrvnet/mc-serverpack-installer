@@ -26,7 +26,6 @@ def download_manifest_mods(path,apiKey):
                     print(f"https://api.hypesrv.net/v2/modpack/fileUrl/{mod_id}/{file_id}")
                     headers = {"Authorization": "Bearer "+apiKey}
                     response = requests.get(f"https://api.hypesrv.net/v2/modpack/fileUrl/{mod_id}/{file_id}", timeout=60, headers=headers).json()["data"]
-                    print(response)
                     mname = response["displayName"]
                     print(f"Downloading {mname} ...")
                     download(response["downloadUrl"])
