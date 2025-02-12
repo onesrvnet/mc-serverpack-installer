@@ -557,6 +557,9 @@ else:
                             print(
                                 "Found outdated and broken version of forge 1.12.2. Downloading latest for 1.12.2 instead.")
                             forge_installer_url = 'https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2860/forge-1.12.2-14.23.5.2860-installer.jar'
+                        elif modpack_jar_version.startswith("1.7") or modpack_jar_version.startswith("1.8") or modpack_jar_version.startswith("1.9"):
+                            mc_version = modpack_jar_version.split("-",1)[0]
+                            forge_installer_url = f'https://files.minecraftforge.net/maven/net/minecraftforge/forge/{modpack_jar_version}-{mc_version}/forge-{modpack_jar_version}-{mc_version}-installer.jar'
                         else:
                             forge_installer_url = f'https://files.minecraftforge.net/maven/net/minecraftforge/forge/{modpack_jar_version}/forge-{modpack_jar_version}-installer.jar'
                         os.chdir(f"{this_dir}/{folder_name}")
