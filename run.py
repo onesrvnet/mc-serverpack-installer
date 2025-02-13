@@ -821,5 +821,23 @@ if mode == "pterodactyl":
                     # Requires enabling developer mode in windows 10.
                     elif operating_system == "Windows":
                         os.symlink(link_from, link_to)
+            for neoforge_ver_folder in glob.glob(glob.escape("/"+"mnt"+"/"+"server"+"/" + "libraries" + "/" + "net" + "/" + "neoforged" + "/" + "neoforge" + "/") + "*"):
+                if neoforge_ver_folder:
+                    forge_ver = os.path.basename(neoforge_ver_folder)
+                    print("NeoForge version is:", forge_ver)
+
+                    link_from = join(
+                        "/mnt","server", "libraries", "net", "neoforged", "neoforge", forge_ver, "unix_args.txt")
+                    link_to = join("/mnt","server", "unix_args.txt")
+
+                    #print(f"Creating symbolic link for unix_args.txt to root folder from {link_from} to {link_to}")
+
+                    if operating_system == "Linux":
+                        os.system(f"cp {link_from} {link_to}")
+                        #os.symlink(link_from, link_to)
+                    # Requires enabling developer mode in windows 10.
+                    elif operating_system == "Windows":
+                        os.symlink(link_from, link_to)
+        
 
 print("Finished downloading and installing modpack", modpack_name + "! :)")
