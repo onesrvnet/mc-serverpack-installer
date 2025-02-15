@@ -509,9 +509,48 @@ else:
                     #os.system(
                     #    f'''java -jar "{this_dir}/ModpackDownloader-cli-0.7.2.jar" -manifest "{this_dir}/{folder_name}/manifest.json" -folder "{this_dir}/{folder_name}/mods"''')
 
+        serverpack_installer = False
+        for name in glob.glob(glob.escape(this_dir + "/" + folder_name + "/") + "variables.txt"):
+            if name:
+                serverpack_installer = True
+                serverpack_installer_installpath = f"{this_dir}/{folder_name}/"
+                print("Changing serverpack installer install path to modpack directory")
+                # Changes the installpath of the serverstarter script to base directory instead of the default /setup
+                change_installpath(name, serverpack_installer_installpath)
+
+                if operating_system == "Windows":
+                    file_ext = "*.bat"
+                    print("Detected Windows Operating System")
+                if operating_system == "Linux":
+                    file_ext = "*.sh"
+                    print("Detected Linux Operating System")
+                if operating_system == "Mac OS":
+                    file_ext = "*.sh"
+                    print("Detected Mac OS Operating System")
+                for file in glob.glob(this_dir + "/" + folder_name + "/" + f"{file_ext}"):
+                    print("Changing Directory for serverpack installer")
+                    os.chdir(f"{this_dir}/{folder_name}")
+                    print(
+                        "Running serverpack Installer. This may take a minute or two...")
+                    if file_ext == "*.sh":
+                        os.system(f"chmod +x {file}")
+                    p = subprocess.Popen(
+                        f"{file}", stdout=subprocess.PIPE, shell=True)
+                    for line in p.stdout:
+                        print(line.decode())
+                        if b"fabric-server-launch.jar" in line:
+                            serverstarter_fabric = True
+                        if b"The server installed successfully" in line or b"Done installing loader" in line or b"deleting installer" in line or b"EULA" in line or b"eula" in line:
+                            # Terminates script when script has successfully installed all mods and forge files etc. and stops it from running the server
+                            print("Got Installer Finished Message")
+                            break
+                    kill(p.pid)
+                    print("Terminated serverpack installer")
+                    print("Deleting leftover serverpack installer file")
+                    os.remove(file)
         # If there was no included forge/fabric or serverstarter installer, as well as no manifest.json provided in the serverpack, look for existing forge or fabric server jar. If they don't exist, get the manifest file and download the correct forge/fabric version and install it.
         server_jar_found = False
-        if not forge_installer and not serverstarter_installer and not fabric_installer and not mods_csv_installer:
+        if not forge_installer and not serverstarter_installer and not fabric_installer and not mods_csv_installer and not serverpack_installer:
             print("Neither a forge installer or a serverstarter installer was found for the downloaded pack. Checking if forge/fabric jar already exists...")
             for name in glob.glob(glob.escape(this_dir + "/" + folder_name + "/") + "*"):
                 if ".jar" in name.lower() and "minecraft" not in name.lower():
@@ -565,6 +604,7 @@ else:
                                 delete_tree_directory(
                                     this_dir + "/" + temp_folder)
                                 print("Deleted temp folder")
+                
 
                 if modpack_jar_type:
                     if modpack_jar_type == "forge":
