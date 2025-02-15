@@ -528,7 +528,7 @@ else:
 
         # If there was no included forge/fabric or serverstarter installer, as well as no manifest.json provided in the serverpack, look for existing forge or fabric server jar. If they don't exist, get the manifest file and download the correct forge/fabric version and install it.
         server_jar_found = False
-        if not forge_installer and not serverstarter_installer and not fabric_installer and not mods_csv_installer and not serverpack_installer:
+        if not forge_installer and not serverstarter_installer and not fabric_installer and not mods_csv_installer:
             print("Neither a forge installer or a serverstarter installer was found for the downloaded pack. Checking if forge/fabric jar already exists...")
             for name in glob.glob(glob.escape(this_dir + "/" + folder_name + "/") + "*"):
                 if ".jar" in name.lower() and "minecraft" not in name.lower():
