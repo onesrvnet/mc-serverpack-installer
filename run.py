@@ -17,6 +17,7 @@ import pathlib
 import platform
 import sys
 import argparse
+from configobj import ConfigObj
 
 parser = argparse.ArgumentParser(
     description="Set options for modpack installer.")
@@ -509,42 +510,22 @@ else:
                     #os.system(
                     #    f'''java -jar "{this_dir}/ModpackDownloader-cli-0.7.2.jar" -manifest "{this_dir}/{folder_name}/manifest.json" -folder "{this_dir}/{folder_name}/mods"''')
 
+        #TRY TO PARSE PACKS WITH variables.txt FILE
+
         serverpack_installer = False
+        serverpack_modloader = "forge"
+        serverpack_loader_version = ""
+        serverpack_minecraft_version = ""
         for name in glob.glob(glob.escape(this_dir + "/" + folder_name + "/") + "variables.txt"):
             if name:
+                print("Trying to read modpack config from variables.txt")
                 serverpack_installer = True
-                serverpack_installer_installpath = f"{this_dir}/{folder_name}/"
-              
-                if operating_system == "Windows":
-                    file_ext = "*.bat"
-                    print("Detected Windows Operating System")
-                if operating_system == "Linux":
-                    file_ext = "*.sh"
-                    print("Detected Linux Operating System")
-                if operating_system == "Mac OS":
-                    file_ext = "*.sh"
-                    print("Detected Mac OS Operating System")
-                for file in glob.glob(this_dir + "/" + folder_name + "/" + f"{file_ext}"):
-                    print("Changing Directory for serverpack installer")
-                    os.chdir(f"{this_dir}/{folder_name}")
-                    print(
-                        "Running serverpack Installer. This may take a minute or two...")
-                    if file_ext == "*.sh":
-                        os.system(f"chmod +x {file}")
-                    p = subprocess.Popen(
-                        f"{file}", stdout=subprocess.PIPE, shell=True)
-                    for line in p.stdout:
-                        print(line.decode())
-                        if b"fabric-server-launch.jar" in line:
-                            serverstarter_fabric = True
-                        if b"The server installed successfully" in line or b"Done installing loader" in line or b"deleting installer" in line or b"EULA" in line or b"eula" in line:
-                            # Terminates script when script has successfully installed all mods and forge files etc. and stops it from running the server
-                            print("Got Installer Finished Message")
-                            break
-                    kill(p.pid)
-                    print("Terminated serverpack installer")
-                    print("Deleting leftover serverpack installer file")
-                    os.remove(file)
+                config =  ConfigObj(glob.escape(this_dir + "/" + folder_name + "/") + "variables.txt")
+                serverpack_modloader = config.get("MODLOADER").lower()
+                serverpack_loader_version = config.get("MODLOADER_VERSION").lower()
+                serverpack_minecraft_version = config.get("MINECRAFT_VERSION").lower()
+                print("Detected " + serverpack_modloader+ " version " + serverpack_loader_version + " for MC "+serverpack_minecraft_version)
+
         # If there was no included forge/fabric or serverstarter installer, as well as no manifest.json provided in the serverpack, look for existing forge or fabric server jar. If they don't exist, get the manifest file and download the correct forge/fabric version and install it.
         server_jar_found = False
         if not forge_installer and not serverstarter_installer and not fabric_installer and not mods_csv_installer and not serverpack_installer:
@@ -565,16 +546,25 @@ else:
             modpack_jar_type = None
             if not server_jar_found:
                 manifest_file_found = False
-                print("No forge or fabric file found. Checking for manifest.json...")
-                for name in glob.glob(glob.escape(this_dir + "/" + folder_name + "/") + "manifest.json"):
-                    if name:
-                        manifest_file_found = True
-                        print(
-                            "Found manifest file in modpack folder. Grabbing forge or fabric version...")
-                        grabbed_manifest_version = get_forge_or_fabric_version_from_manifest(
-                            name)
-                        modpack_jar_type = grabbed_manifest_version[0]
-                        modpack_jar_version = grabbed_manifest_version[1]
+
+                if serverpack_installer:
+                    print("No forge or fabric file found. Setting vars from variables.txt")
+                    modpack_jar_type = serverpack_modloader
+                    if serverpack_modloader == "forge":
+                        modpack_jar_version = serverpack_minecraft_version + "-" + serverpack_loader_version
+                    elif serverpack_modloader == "fabric":
+                        modpack_jar_version = serverpack_minecraft_version
+                else:
+                    print("No forge or fabric file found. Checking for manifest.json...")
+                    for name in glob.glob(glob.escape(this_dir + "/" + folder_name + "/") + "manifest.json"):
+                        if name:
+                            manifest_file_found = True
+                            print(
+                                "Found manifest file in modpack folder. Grabbing forge or fabric version...")
+                            grabbed_manifest_version = get_forge_or_fabric_version_from_manifest(
+                                name)
+                            modpack_jar_type = grabbed_manifest_version[0]
+                            modpack_jar_version = grabbed_manifest_version[1]
 
                 if not manifest_file_found:
                     if modpack_normal_downloadurl:

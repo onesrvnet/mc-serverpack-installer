@@ -7,3 +7,4 @@ oschmod
 pyyaml
 py-dactyl
 wget==3.2
+configobj
