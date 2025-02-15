@@ -514,10 +514,7 @@ else:
             if name:
                 serverpack_installer = True
                 serverpack_installer_installpath = f"{this_dir}/{folder_name}/"
-                print("Changing serverpack installer install path to modpack directory")
-                # Changes the installpath of the serverstarter script to base directory instead of the default /setup
-                change_installpath(name, serverpack_installer_installpath)
-
+              
                 if operating_system == "Windows":
                     file_ext = "*.bat"
                     print("Detected Windows Operating System")
