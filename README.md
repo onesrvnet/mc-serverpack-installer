@@ -1,10 +1,10 @@
 # Minecraft Serverpack Downloader and Installer
 
-This is a Python script made to automatically download and install Minecraft modpacks from 
-Curseforge, Technicpack, FTB, and a direct download link as the pack was intended by the modpack author. Serverpacks provided for modpacks by their authors come in very different kinds, with many different installers. This is an attempt to unify the installation of all serverpacks (for both Forge and Fabric) as the modpack author intended them to be. [Here's the kinds of serverpack installers the script works with](#installer-types). The script is extensively tested and should work with all modpacks on Curseforge.
+This is a TypeScript (Node.js) tool that automatically downloads and installs Minecraft modpacks from
+Curseforge, Technicpack, FTB, Modrinth, or a direct download link as the pack was intended by the modpack author. Serverpacks provided for modpacks by their authors come in very different kinds, with many different installers. This is an attempt to unify the installation of all serverpacks (for both Forge and Fabric) as the modpack author intended them to be. [Here's the kinds of serverpack installers the tool works with](#installer-types). The tool is extensively tested and should work with all modpacks on Curseforge.
 
-#### The script will:
-1. Download the modpacks serverpack (or non-serverpack) from the Curseforge Project ID, Technic modpack slug, FTB modpack ID, or a direct download link (url). See details below.
+#### The tool will:
+1. Download the modpacks serverpack (or non-serverpack) from the Curseforge Project ID, Technic modpack slug, FTB modpack ID, Modrinth project ID/slug, or a direct download link (url). See details below.
 
 2. Run any provided installers through a unification attempt that come with the serverpack if needed.
 
@@ -13,19 +13,46 @@ Curseforge, Technicpack, FTB, and a direct download link as the pack was intende
 After the installer is done, the modpack will be fully installed in a separate folder (named after the modpack itself) and ready to be started.
 
 ## Compatibility
-OS: ```Windows```, ```Linux```  
-The script works with both Forge and Fabric modpacks.
+OS: ```Windows```, ```Linux```
+Works with both Forge and Fabric modpacks.
 
 ## Usage
-### 1. Download and unarchive the repository into any directory you want
+### 1. Clone or download this repository into any directory you want
 
-### 2. Install requirements.txt using ```pip install -r requirements.txt```
+### 2. Install dependencies
+```bash
+npm install
+```
 
-### 3. Run "run.py" from your terminal with specified [arguments](#arguments) like:
+### 3. Build the TypeScript sources
+```bash
+npm run build
+```
+
+### 4. Run the installer from your terminal with specified [arguments](#arguments) like:
 ##### optional arguments marked in square [brackets].
-python run.py ```-provider PROVIDER``` ```-modpack-id MODPACK-ID``` ```[--modpack-version MODPACK-VERSION]``` ```[--pterodactyl]``` ```[--clean-scripts]``` ```[--update]```
+```bash
+npm start -- --provider PROVIDER --modpack-id MODPACK-ID [--modpack-version MODPACK-VERSION] [--pterodactyl] [--clean-scripts] [--update]
+```
+
+Or directly:
+```bash
+node dist/cli.js --provider PROVIDER --modpack-id MODPACK-ID [...]
+```
+
+For development without a build step:
+```bash
+npm run dev -- --provider PROVIDER --modpack-id MODPACK-ID
+```
 
 ### Done!
+
+## Available npm scripts
+- ```npm run build``` — compile TypeScript to ```dist/```
+- ```npm start``` — run the compiled CLI
+- ```npm run dev``` — run directly from sources via ```tsx```
+- ```npm run typecheck``` — type-check without emitting files
+- ```npm run clean``` — remove ```dist/```
 
 ## Arguments
 #### provider
@@ -48,26 +75,50 @@ In conjunction with Curseforges' release type system, if no "recommended" versio
 Set to clean (remove) the provided startup scripts (.sh for linux and .bat for Windows) when installing the modpack.
 #### update (optional)
 Set to remove the /mods, /.fabric and /libraries folders before installing the modpack. This should be set if updating a modpack and not set if it's a first-time install.
-
+#### folder-name (optional)
+Explicit output folder name (ignored in pterodactyl mode).
+#### working-path (optional)
+Directory to work in (default: current working directory).
+#### manifest-api-key (optional)
+API key for hypeserv manifest mod downloads.
+#### wget-mode (optional)
+Use wget-like (HEAD redirect resolve) download behavior. Implied for ```ftb```.
 #### pterodactyl (optional)
 Pterodactyl is intended to use in conjunction with a pterodactyl egg install script ([More details on this](#pterodactyl-mode)).
 
 ## Installer types
-There is currently no standardization in how serverpacks are uploaded on Curseforge. 
+There is currently no standardization in how serverpacks are uploaded on Curseforge.
 * Some serverpacks include **all** required files to run the server by default
 * Some require Forge or Fabric to be installed separately with only the mods and libraries folders included
-* Some for mods to be downloaded using the [ServerStarter script by BloodyMods](https://github.com/BloodyMods/ServerStarter) or the somewhat standardized manifest.json file. 
+* Some require mods to be downloaded using the [ServerStarter script by BloodyMods](https://github.com/BloodyMods/ServerStarter) or the somewhat standardized manifest.json file.
 
-This script is compatible with all different types of installers by identifying and running them as tasks separately if needed. The advantage of using this script over other scripts is that it downloads and installs the serverpack as intended by the modpack author, keeping certain files that they have included which, were the mods installed in any other way, would not have been included. 
+This tool is compatible with all different types of installers by identifying and running them as tasks separately if needed. The advantage of using this tool over others is that it downloads and installs the serverpack as intended by the modpack author, keeping certain files that they have included which, were the mods installed in any other way, would not have been included.
 
 The modpack author may, for example, have made modifications to the server.properties file or any mod config file. These modifications would not be carried over using another way of installing the modpack.
 
 For technic, contrary to curse, modpacks are standardized to include all files required to start the server.
 
 ## Pterodactyl Mode
-The script can also run in the optional ```--pterodactyl``` mode. Pterodactyl mode is intended to be used in conjunction with popular Game Server Panel software [Pterodactyl Panel](https://github.com/pterodactyl/panel) in an egg install script (in bash). Currently, this mode will move the files directly to the root folder of the installation script instead of the modpack installing in it's own subfolder.
+The tool can also run in the optional ```--pterodactyl``` mode. Pterodactyl mode is intended to be used in conjunction with popular Game Server Panel software [Pterodactyl Panel](https://github.com/pterodactyl/panel) in an egg install script (in bash). Currently, this mode will move the files directly to the root folder of the installation script instead of the modpack installing in its own subfolder.
 
 ## Requirements
-```Python 3.7+``` (Might work on earlier versions of python as well - not tested.)  
-```python3-pip```  
+```Node.js 18+``` (for native ESM + fetch / modern APIs)
+```npm``` (bundled with Node.js)
 ```Java (11 or later)``` (for Forge/Fabric installers)
+
+## Project structure
+```
+src/
+  cli.ts                       CLI entrypoint (yargs)
+  main.ts                      Orchestrates the install flow
+  downloadFile.ts              HTTP download + progress bar
+  downloadManifestMods.ts      Curse manifest.json mod downloader (hypeserv API)
+  downloadModrinthMods.ts      Modrinth index + overrides + server jar
+  getForgeOrFabricVersion.ts   Parse loader info from Curse manifest
+  getModpackInfo.ts            Resolve modpack name/urls per provider
+  serverstarter.ts             ServerStarter YAML rewriter
+  unzipModpack.ts              Archive extraction
+  util/
+    fsHelpers.ts               Small fs utilities
+    logger.ts                  Console logger
+```

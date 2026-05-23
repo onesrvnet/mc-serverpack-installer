@@ -1,0 +1,42 @@
+{
+  "name": "mc-serverpack-installer",
+  "version": "1.0.0",
+  "description": "Installer script that pulls a modpack from a url and extracts/installs it",
+  "license": "Copyright Regh & Meier Services GbR",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "mc-serverpack-installer": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "dev": "tsx src/cli.ts",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onesrvnet/mc-serverpack-installer.git"
+  },
+  "private": true,
+  "dependencies": {
+    "adm-zip": "^0.5.10",
+    "axios": "^1.7.0",
+    "cli-progress": "^3.12.0",
+    "fs-extra": "^11.2.0",
+    "yaml": "^2.5.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.5",
+    "@types/cli-progress": "^3.11.5",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.11.0",
+    "@types/yargs": "^17.0.32",
+    "rimraf": "^5.0.5",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}
