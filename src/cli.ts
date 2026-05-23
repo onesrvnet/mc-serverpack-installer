@@ -8,7 +8,7 @@ interface CliArgs {
     provider?: string;
     'modpack-id'?: string;
     'modpack-version': string | false;
-    pterodactyl: boolean;
+    wings: boolean;
     'clean-scripts': boolean;
     update: boolean;
     'folder-name': string | false;
@@ -36,8 +36,8 @@ async function main(): Promise<void> {
             describe: 'Version/build identifier (not used for direct)',
             default: false as const
         })
-        .option('pterodactyl', {
-            describe: 'Pterodactyl mode (install directly into working path)',
+        .option('wings', {
+            describe: 'Wings mode (install directly into working path, no modpack subfolder)',
             type: 'boolean',
             default: false
         })
@@ -52,7 +52,7 @@ async function main(): Promise<void> {
             default: false
         })
         .option('folder-name', {
-            describe: 'Explicit output folder name (ignored in pterodactyl mode)',
+            describe: 'Explicit output folder name (ignored in wings mode)',
             type: 'string',
             default: false as const
         })
@@ -88,7 +88,7 @@ async function main(): Promise<void> {
         provider: argv.provider ? (argv.provider as Provider) : undefined,
         modpackId: argv['modpack-id'] as string,
         modpackVersion: argv['modpack-version'] || false,
-        pterodactyl: argv.pterodactyl,
+        wings: argv.wings,
         cleanScripts: argv['clean-scripts'],
         update: argv.update,
         folderName: argv['folder-name'] || false,

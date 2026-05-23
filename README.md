@@ -32,7 +32,7 @@ npm run build
 ### 4. Run the installer from your terminal with specified [arguments](#arguments) like:
 ##### optional arguments marked in square [brackets].
 ```bash
-npm start -- --provider PROVIDER --modpack-id MODPACK-ID [--modpack-version MODPACK-VERSION] [--pterodactyl] [--clean-scripts] [--update]
+npm start -- --provider PROVIDER --modpack-id MODPACK-ID [--modpack-version MODPACK-VERSION] [--wings] [--clean-scripts] [--update]
 ```
 
 Or directly:
@@ -76,15 +76,15 @@ Set to clean (remove) the provided startup scripts (.sh for linux and .bat for W
 #### update (optional)
 Set to remove the /mods, /.fabric and /libraries folders before installing the modpack. This should be set if updating a modpack and not set if it's a first-time install.
 #### folder-name (optional)
-Explicit output folder name (ignored in pterodactyl mode).
+Explicit output folder name (ignored in wings mode).
 #### working-path (optional)
 Directory to work in (default: current working directory).
 #### manifest-api-key (optional)
 API key for hypeserv manifest mod downloads.
 #### wget-mode (optional)
 Use wget-like (HEAD redirect resolve) download behavior. Implied for ```ftb```.
-#### pterodactyl (optional)
-Pterodactyl is intended to use in conjunction with a pterodactyl egg install script ([More details on this](#pterodactyl-mode)).
+#### wings (optional)
+Wings mode is intended to use in conjunction with a panel daemon egg install script ([More details on this](#wings-mode)).
 
 ## Installer types
 There is currently no standardization in how serverpacks are uploaded on Curseforge.
@@ -98,8 +98,8 @@ The modpack author may, for example, have made modifications to the server.prope
 
 For technic, contrary to curse, modpacks are standardized to include all files required to start the server.
 
-## Pterodactyl Mode
-The tool can also run in the optional ```--pterodactyl``` mode. Pterodactyl mode is intended to be used in conjunction with popular Game Server Panel software [Pterodactyl Panel](https://github.com/pterodactyl/panel) in an egg install script (in bash). Currently, this mode will move the files directly to the root folder of the installation script instead of the modpack installing in its own subfolder.
+## Wings Mode
+The tool can also run in the optional ```--wings``` mode. Wings mode is intended to be used in conjunction with a Game Server Panel daemon (e.g. [Pterodactyl Wings](https://github.com/pterodactyl/wings)) in an egg install script (in bash). In this mode, after install the modpack contents are flattened into the working path instead of staying inside a modpack subfolder, so the daemon finds the server files directly at the working root.
 
 ## Requirements
 ```Node.js 18+``` (for native ESM + fetch / modern APIs)

@@ -34,7 +34,7 @@ export interface InstallerOptions {
     provider?: Provider;
     modpackId: string;
     modpackVersion: string | false;
-    pterodactyl: boolean;
+    wings: boolean;
     cleanScripts: boolean;
     update: boolean;
     folderName: string | false;
@@ -58,6 +58,7 @@ export async function runInstaller(opts: InstallerOptions): Promise<void> {
         provider,
         modpackId,
         modpackVersion,
+        wings,
         cleanScripts,
         update,
         folderName: explicitFolderName,
@@ -83,7 +84,7 @@ export async function runInstaller(opts: InstallerOptions): Promise<void> {
         const filename = await downloadWgetStyle(modpackId);
         const modpackName = deriveNameFromFilename(filename) || 'Direct_Download';
 
-        await runInstallPipeline({
+        const installedAt = await runInstallPipeline({
             filename,
             modpackName,
             thisDir,
@@ -92,6 +93,9 @@ export async function runInstaller(opts: InstallerOptions): Promise<void> {
             manifestApiKey,
             cleanScripts
         });
+        if (wings) {
+            await flattenIntoWorkingDir(installedAt, thisDir);
+        }
         log.info(`Finished downloading and installing modpack ${modpackName}! :)`);
         return;
     }
@@ -147,7 +151,7 @@ export async function runInstaller(opts: InstallerOptions): Promise<void> {
     }
 
     const filename = await download(downloadUrl);
-    await runInstallPipeline({
+    const installedAt = await runInstallPipeline({
         filename,
         modpackName,
         thisDir,
@@ -156,7 +160,27 @@ export async function runInstaller(opts: InstallerOptions): Promise<void> {
         manifestApiKey,
         cleanScripts
     });
+    if (wings) {
+        await flattenIntoWorkingDir(installedAt, thisDir);
+    }
     log.info(`Finished downloading and installing modpack ${modpackName}! :)`);
+}
+
+/**
+ * Move every entry from the install subfolder up to the working directory
+ * (wings mode), then remove the now-empty subfolder. Used so the server
+ * panel daemon finds files at /mnt/server, not /mnt/server/<modpack>/.
+ */
+async function flattenIntoWorkingDir(installedAt: string, workingDir: string): Promise<void> {
+    if (path.resolve(installedAt) === path.resolve(workingDir)) return;
+    log.info(`Wings mode: flattening ${installedAt} -> ${workingDir}`);
+    const entries = await fs.readdir(installedAt);
+    for (const entry of entries) {
+        const from = path.join(installedAt, entry);
+        const to = path.join(workingDir, entry);
+        await fs.move(from, to, { overwrite: true });
+    }
+    await fs.remove(installedAt);
 }
 
 function pickDownloadUrl(modpackUrls: ModpackUrls, modpackName: string): string | null {
@@ -189,7 +213,7 @@ function deriveNameFromFilename(filename: string): string | null {
     return base.replace(/[:,\s]/g, '_');
 }
 
-async function runInstallPipeline(input: InstallPipelineInput): Promise<void> {
+async function runInstallPipeline(input: InstallPipelineInput): Promise<string> {
     const {
         filename,
         modpackName,
@@ -304,6 +328,8 @@ async function runInstallPipeline(input: InstallPipelineInput): Promise<void> {
             }
         }
     }
+
+    return modpackFolderPath;
 }
 
 /**
