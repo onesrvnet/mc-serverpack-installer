@@ -1,5 +1,11 @@
 # Minecraft Serverpack Downloader and Installer
 
+
+This repository has been superseded by https://github.com/hypeserv/mcmp-installer please see it for any updates.
+
+
+---
+
 This is a TypeScript (Node.js) tool that automatically downloads and installs Minecraft modpacks from
 Curseforge, Technicpack, FTB, Modrinth, or a direct download link as the pack was intended by the modpack author. Serverpacks provided for modpacks by their authors come in very different kinds, with many different installers. This is an attempt to unify the installation of all serverpacks (for both Forge and Fabric) as the modpack author intended them to be. [Here's the kinds of serverpack installers the tool works with](#installer-types). The tool is extensively tested and should work with all modpacks on Curseforge.
 
